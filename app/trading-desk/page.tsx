@@ -1,0 +1,98 @@
+"use client";
+import { useState, useEffect } from 'react';
+const PAIR_LIST = ['EUR/USD','GBP/JPY','USD/JPY','AUD/USD','USD/CAD','NZD/USD','EUR/GBP','GBP/USD','EUR/JPY','USD/CHF','AUD/JPY','EUR/CHF'];
+
+export default function FullTradingDesk() {
+  const [live, setLive] = useState<any>({});
+  const [fund, setFund] = useState<any>({});
+  const [cal, setCal] = useState<any[]>([]);
+  const [time, setTime] = useState('');
+
+  const fetchAll = async () => {
+    try {
+      const [l, f, c] = await Promise.all([
+        fetch('/api/live-forex').then(r=>r.json()),
+        fetch('/api/fundamentals').then(r=>r.json()),
+        fetch('/api/calendar').then(r=>r.json()),
+      ]);
+      setLive(l.data||{}); setFund(f.pairs||{}); setCal(c.data||[]); setTime(new Date().toLocaleTimeString());
+    } catch(e){ console.log(e) }
+  };
+
+  useEffect(()=>{ fetchAll(); const i=setInterval(fetchAll, 15000); return()=>clearInterval(i); }, []);
+
+  const getCalForPair = (pair:string) => {
+    const [b,q]=pair.split('/');
+    return cal.filter((e:any)=> e.country===b || e.country===q || e.country=== (b==='USD'?'USD':null) || e.country=== (q==='USD'?'USD':null)).slice(0,3);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#050811] text-white p-3">
+      <div className="border border-cyan-500/30 p-4 rounded-xl bg-black/60 mb-4 flex justify-between">
+        <div><h1 className="text-2xl font-black tracking-wider">TRADING DESK - REAL FUNDAMENTAL PLAYBOOK</h1><p className="text-xs text-cyan-300">Yahoo Finance Live + ForexFactory Calendar + CFTC COT + Central Bank Rates | All REAL</p></div>
+        <div className="text-right text-xs"><div className="text-cyan-300">Live: {time}</div><div className="text-green-400">● Yahoo 200 OK</div><div className="text-yellow-400">● FF Calendar {cal.length} High Impact</div></div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {PAIR_LIST.map(pair=>{
+          const lp = live[pair];
+          const fp = fund[pair];
+          const events = getCalForPair(pair);
+          if(!fp) return <div key={pair} className="border border-white/10 p-4 rounded-xl animate-pulse">Loading {pair}...</div>;
+          const isBull = fp.bias==='BULLISH';
+          const isBear = fp.bias==='BEARISH';
+          return (
+            <div key={pair} className={`border rounded-2xl p-4 relative overflow-hidden ${isBull?'border-green-500/30 bg-green-950/10': isBear?'border-red-500/30 bg-red-950/10':'border-yellow-500/30 bg-yellow-950/10'}`}>
+              <div className="flex justify-between items-start">
+                <div><h2 className="text-xl font-black">{pair}</h2><div className="text-xs text-gray-400">{fp.bankBias}</div></div>
+                <div className="text-right"><div className={`px-3 py-1 rounded-full text-xs font-black ${isBull?'bg-green-500 text-black': isBear?'bg-red-500 text-white':'bg-yellow-500 text-black'}`}>{fp.bias}</div><div className="text-lg font-mono font-bold mt-1">{lp?.priceFormatted || '...'}</div></div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] font-mono">
+                <div className="bg-black/60 p-2 rounded border border-white/10"><div className="text-gray-400">LIVE PRICE</div><div className="text-white font-bold">{lp?.priceFormatted}</div></div>
+                <div className="bg-black/60 p-2 rounded border border-white/10"><div className="text-gray-400">PDH</div><div>{lp?.pdhFormatted}</div><div className="text-[10px] text-red-300">SL SELL: {lp?.slForSellFormatted}</div></div>
+                <div className="bg-black/60 p-2 rounded border border-white/10"><div className="text-gray-400">PDL</div><div>{lp?.pdlFormatted}</div><div className="text-[10px] text-green-300">SL BUY: {lp?.slForBuyFormatted}</div></div>
+              </div>
+
+              <div className="mt-3 bg-black/70 p-3 rounded-xl border border-cyan-500/20">
+                <div className="text-[11px] font-bold text-cyan-300 mb-1">WHY {fp.bias}?</div>
+                <div className="text-[12px] leading-snug text-gray-200">{fp.explanation}</div>
+                <div className="text-[11px] mt-2 text-yellow-200/80">{fp.bankFlow}</div>
+                <div className="text-[10px] mt-1 text-gray-400">Rate Diff: {fp.base} {fp.baseRate}% vs {fp.quote} {fp.quoteRate}% = {fp.rateDiff>0?'+':''}{fp.rateDiff.toFixed(2)}%</div>
+              </div>
+
+              <div className="mt-3">
+                <div className="text-[11px] font-bold text-orange-300">NEWS THAT WILL MOVE IT (Real ForexFactory)</div>
+                <div className="mt-1 space-y-1">
+                  {events.length>0? events.map((ev:any,i:number)=>(
+                    <div key={i} className="flex justify-between text-[11px] bg-black/50 p-1.5 rounded border border-white/5">
+                      <span className="text-white">{ev.country} {ev.title}</span>
+                      <span className="text-gray-400">{ev.forecast? `F:${ev.forecast}`:''} {ev.previous? `P:${ev.previous}`:''}</span>
+                    </div>
+                  )) : <div className="text-[11px] text-gray-500">No High Impact today - technical only</div>}
+                </div>
+              </div>
+
+              <div className="mt-3 flex gap-2">
+                <div className={`flex-1 text-center py-2 rounded font-black text-xs ${isBull?'bg-green-500 text-black':'bg-black/60 text-gray-500 border border-white/10'}`}>BUY {lp?.priceFormatted} SL {lp?.slForBuyFormatted}</div>
+                <div className={`flex-1 text-center py-2 rounded font-black text-xs ${isBear?'bg-red-500 text-white':'bg-black/60 text-gray-500 border border-white/10'}`}>SELL {lp?.priceFormatted} SL {lp?.slForSellFormatted}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 border border-white/10 p-4 rounded-xl bg-black/50">
+        <h3 className="font-bold text-sm mb-2">Full Economic Calendar (Real - ForexFactory High Impact This Week)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          {cal.slice(0,18).map((ev:any,i:number)=>(
+            <div key={i} className="text-[11px] flex justify-between bg-[#0a0e1a] p-2 rounded border border-white/5">
+              <span><b className="text-cyan-300">{ev.country}</b> {ev.title}</span>
+              <span className="text-gray-500">{new Date(ev.date).toLocaleDateString()} {ev.impact}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

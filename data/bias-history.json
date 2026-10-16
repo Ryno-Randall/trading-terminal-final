@@ -1,0 +1,68 @@
+{
+  "EUR/USD": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BEARISH",
+      "to": "BEARISH",
+      "price": 1.1247,
+      "reason": "USD currency score advantage 1.60 over EUR. USD policy-rate advantage 1.35% over EUR. Banks selling EUR, moving to USD. Institutional flow: Short EUR/USD - Banks rotating out of EUR into higher-scoring USD.",
+      "initial": true,
+      "count": 0
+    }
+  ],
+  "GBP/USD": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BEARISH",
+      "to": "BEARISH",
+      "price": 1.3334,
+      "reason": "USD currency score advantage 2.56 over GBP. USD policy-rate advantage 0.25% over GBP. Banks selling GBP, moving to USD. Institutional flow: Short GBP/USD - Banks rotating out of GBP into higher-scoring USD.",
+      "initial": true,
+      "count": 0
+    }
+  ],
+  "USD/JPY": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BULLISH",
+      "to": "BULLISH",
+      "price": 158.049,
+      "reason": "USD currency score advantage 3.06 over JPY. USD policy-rate advantage 2.75% over JPY. Banks selling JPY, moving to USD. Institutional flow: Long USD/JPY - Banks rotating out of JPY into higher-scoring USD.",
+      "initial": true,
+      "count": 0
+    }
+  ],
+  "USD/CAD": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BULLISH",
+      "to": "BULLISH",
+      "price": 1.4169,
+      "reason": "USD currency score advantage 4.06 over CAD. USD policy-rate advantage 1.75% over CAD. Banks selling CAD, moving to USD. Institutional flow: Long USD/CAD - Banks rotating out of CAD into higher-scoring USD.",
+      "initial": true,
+      "count": 0
+    }
+  ],
+  "AUD/USD": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BULLISH",
+      "to": "BULLISH",
+      "price": 0.6955,
+      "reason": "AUD currency score advantage 0.29 over USD. AUD policy-rate advantage 0.60% over USD. Banks selling USD, moving to AUD. Institutional flow: Long AUD/USD - Banks rotating out of USD into higher-scoring AUD.",
+      "initial": true,
+      "count": 0
+    }
+  ],
+  "NZD/USD": [
+    {
+      "timestamp": "2026-10-16T13:02:37.572Z",
+      "from": "BEARISH",
+      "to": "BEARISH",
+      "price": 0.5656,
+      "reason": "USD currency score advantage 1.56 over NZD. USD policy-rate advantage 1.25% over NZD. Banks selling NZD, moving to USD. Institutional flow: Short NZD/USD - Banks rotating out of NZD into higher-scoring USD.",
+      "initial": true,
+      "count": 0
+    }
+  ]
+}
